@@ -1,0 +1,36 @@
+@baseUrl = http://localhost:6400
+
+
+### Hello
+GET {{baseUrl}}/api/v1/hello
+
+### Get Data
+GET {{baseUrl}}/api/v1/getData
+
+### Get By ID
+GET {{baseUrl}}/api/v1/getDataByID/3
+
+### Post Data
+POST {{baseUrl}}/api/v1/addData
+Content-Type: application/json
+
+{
+    "id":1,
+    "title":"Watch the lecture",
+    "description":"Plsfwfe watch the lecture thoroughly",
+    "completed":true
+}
+
+
+
+### Update Data
+PUT {{baseUrl}}/api/v1/updateData/1
+Content-Type: application/json
+
+{
+    "title":"Updatsdvvdsve krdiya ji"
+}
+
+### Delete Data
+DELETE {{baseUrl}}/api/v1/deleteByID/1
+
