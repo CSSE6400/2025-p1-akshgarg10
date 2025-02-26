@@ -37,28 +37,28 @@ def add_data():
         if task["id"] == data["id"]:
             return jsonify({"error":"Task with same ID exists"}),400
     tasks.append(data)
-    return jsonify({"Success":"It's added"}),200
+    return jsonify({"Success":"It's added"}),201
 
 
 
 # update by id
-@api.route('todos/<int:id>', methods=['PUT'])
+@api.route('/todos/<int:id>', methods=['PUT'])
 def update_data(id):
     data = request.get_json()
     for task in tasks:
         if task["id"] == id:
             task.update(data)
-            return jsonify({"Success":"Task updated", "Task":task}),200
+            return jsonify(task),200
     else:
         return jsonify({"error":"the id dosen't matches"}),400    
         
 
         
 # delete by id
-@api.route('todos/<int:id>', methods=['DELETE'])
+@api.route('/todos/<int:id>', methods=['DELETE'])
 def delete_data(id):
     for task in tasks:
         if id == task["id"]:
             tasks.remove(task)
-            return jsonify({"Success":"Task removed"}),200
+            return jsonify(task),200
     return jsonify({"error":"ID does not exists"}),400
