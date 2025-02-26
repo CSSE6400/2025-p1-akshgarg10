@@ -1,36 +1,33 @@
 @baseUrl = http://localhost:6400
 
-
-### Hello
-GET {{baseUrl}}/api/v1/hello
+#Health API
+GET {{baseUrl}}/api/v1/health
 
 ### Get Data
-GET {{baseUrl}}/api/v1/getData
+GET {{baseUrl}}/api/v1/todos
 
 ### Get By ID
-GET {{baseUrl}}/api/v1/getDataByID/3
+GET {{baseUrl}}/api/v1/todos/2
 
 ### Post Data
-POST {{baseUrl}}/api/v1/addData
+POST {{baseUrl}}/api/v1/todos
 Content-Type: application/json
 
 {
-    "id":1,
-    "title":"Watch the lecture",
-    "description":"Plsfwfe watch the lecture thoroughly",
-    "completed":true
+    "id":2,
+    "title":"Cook your meals",
+    "description":"Make chicken fried rice",
+    "completed":false
 }
 
-
-
 ### Update Data
-PUT {{baseUrl}}/api/v1/updateData/1
+PUT {{baseUrl}}/api/v1/todos/4
 Content-Type: application/json
 
 {
-    "title":"Updatsdvvdsve krdiya ji"
+    "title":"Make sure erutto warmup first"
 }
 
 ### Delete Data
-DELETE {{baseUrl}}/api/v1/deleteByID/1
+DELETE {{baseUrl}}/api/v1/todos/1
 
