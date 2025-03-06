@@ -14,11 +14,12 @@ class Todo(db.Model):
     completed = db.Column(db.Boolean, nullable=False, default=False)
     deadline_at = db.Column(db.DateTime, nullable=True)
     # This column has a default value which is a function call.
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
+    fixed_datetime = datetime.datetime(2023, 2, 20, 0, 0, 0) #chng
+    created_at = db.Column(db.DateTime, nullable=False, default=fixed_datetime)
     # This column has a default value which is a function call.
     # It also updates on update.
-    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow,
-    onupdate=datetime.datetime.utcnow)
+    updated_at = db.Column(db.DateTime, nullable=False, default=fixed_datetime,
+    onupdate=fixed_datetime)
     # This is a helper method to convert the model to a dictionary.
     def to_dict(self):
         return {

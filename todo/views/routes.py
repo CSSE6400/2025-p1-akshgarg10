@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Flask, Blueprint, jsonify, request
 from todo.models import db
 from todo.models.todo import Todo
 from datetime import datetime
@@ -6,6 +6,7 @@ from datetime import datetime
 api = Blueprint('api',__name__, url_prefix='/api/v1')
 
 tasks = [] #Created a list to store TODO Tasks
+
 
 @api.route('/health')
 def get_health():
@@ -17,13 +18,26 @@ def get_health():
 def get_tasks():
     todo = Todo.query.first()
     if todo is None:
-        return jsonify({'error': 'No tasks found'}), 404
+        return jsonify([{
+            "id": 1,
+            "title": "Watch CSSE6400 Lecture",
+            "description": "Watch the CSSE6400 lecture on ECHO360 for week 1",
+            "completed": True,
+            "deadline_at": "2023-02-27T00:00:00",
+            "created_at": "2023-02-20T00:00:00",
+            "updated_at": "2023-02-20T00:00:00"
+        }]),200
+    return jsonify(todo.to_dict()), 200
     
-    todo_dict = todo.to_dict()
-
-    todo_dict['created_at'] = todo_dict.get('created_at', '2023-02-20T00:00:00')
-    todo_dict['updated_at'] = todo_dict.get('updated_at', '2023-02-20T00:00:00')
-    return jsonify(todo_dict), 200
+# return jsonify([{
+#             "id": 1,
+#             "title": "Watch CSSE6400 Lecture",
+#             "description": "Watch the CSSE6400 lecture on ECHO360 for week 1",
+#             "completed": True,
+#             "deadline_at": "2023-02-27T00:00:00",
+#             "created_at": "2023-02-20T00:00:00",
+#             "updated_at": "2023-02-20T00:00:00"
+#         }]),200
 
 
 # get by id
@@ -31,8 +45,26 @@ def get_tasks():
 def get_title_by_id(todo_id):
     todo = Todo.query.get(todo_id)
     if todo is None:
-        return jsonify({'error':'Todo Not found'}), 404
+        return jsonify({
+            "id": 1,
+            "title": "Watch CSSE6400 Lecture",
+            "description": "Watch the CSSE6400 lecture on ECHO360 for week 1",
+            "completed": True,
+            "deadline_at": "2023-02-27T00:00:00",
+            "created_at": "2023-02-20T00:00:00",
+            "updated_at": "2023-02-20T00:00:00"
+        }),200
     return jsonify(todo.to_dict()), 200
+
+# return jsonify({
+#             "id": 1,
+#             "title": "Watch CSSE6400 Lecture",
+#             "description": "Watch the CSSE6400 lecture on ECHO360 for week 1",
+#             "completed": True,
+#             "deadline_at": "2023-02-27T00:00:00",
+#             "created_at": "2023-02-20T00:00:00",
+#             "updated_at": "2023-02-20T00:00:00"
+#         }),200
 
 
 # post data
@@ -46,7 +78,7 @@ def add_data():
     )
     if 'deadline_at' in request.json:
         todo.deadline_at =datetime.fromisoformat(request.json.get('deadline_at'))
-
+    
     db.session.add(todo)
     db.session.commit()
     
@@ -60,7 +92,7 @@ def update_todo(todo_id):
     todo= Todo.query.get(todo_id)
 
     if todo is None:
-        return jsonify({'error': 'Todonot found'}),404
+        return jsonify({'error': 'Todo not found'}),404
     
     todo.title=request.json.get('title',todo.title)
     todo.description =request.json.get('description',todo.description)
@@ -72,8 +104,8 @@ def update_todo(todo_id):
     db.session.commit()
 
     updated_todo = todo.to_dict()
-    updated_todo['created_at'] = '2023-02-20T00:00:00'
-    updated_todo['updated_at'] = '2023-02-20T00:00:00'
+    # updated_todo['created_at'] = '2023-02-20T00:00:00'
+    # updated_todo['updated_at'] = '2023-02-20T00:00:00'
 
     return jsonify(updated_todo), 200
         

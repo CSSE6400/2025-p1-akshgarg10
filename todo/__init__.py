@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 def create_app(config_overrides=None):
   app = Flask(__name__)
+  app.json.sort_keys = False
 
   app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///db.sqlite"
   if config_overrides:
@@ -14,7 +15,7 @@ def create_app(config_overrides=None):
   from todo.models.todo import Todo
   db.init_app(app)
 
-  #Create thedatabasetables.
+  #Create the database tables.
   with app.app_context():
     db.create_all()
     db.session.commit()
