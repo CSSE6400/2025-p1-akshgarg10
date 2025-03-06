@@ -1,7 +1,5 @@
 @baseUrl = http://localhost:6400
 
-#Health API
-GET {{baseUrl}}/api/v1/health
 
 ### Get Data
 GET {{baseUrl}}/api/v1/todos
@@ -14,14 +12,13 @@ POST {{baseUrl}}/api/v1/todos
 Content-Type: application/json
 
 {
-    "id":2,
-    "title":"Cook your meals",
-    "description":"Make chicken fried rice",
-    "completed":false
+    "id":3,
+    "title":"testing",
+    "description":"Testing done"
 }
 
 ### Update Data
-PUT {{baseUrl}}/api/v1/todos/2
+PUT {{baseUrl}}/api/v1/todos/3
 Content-Type: application/json
 
 {
@@ -29,5 +26,5 @@ Content-Type: application/json
 }
 
 ### Delete Data
-DELETE {{baseUrl}}/api/v1/todos/2
+DELETE {{baseUrl}}/api/v1/todos/1
 

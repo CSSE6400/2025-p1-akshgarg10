@@ -1,64 +1,92 @@
 from flask import Blueprint, jsonify, request
+from todo.models import db
+from todo.models.todo import Todo
 from datetime import datetime
 
 api = Blueprint('api',__name__, url_prefix='/api/v1')
 
 tasks = [] #Created a list to store TODO Tasks
 
-#Health API
 @api.route('/health')
-def heal():
-    return jsonify({"status":"ok"}), 200
-
+def get_health():
+    return jsonify({'status':'ok'})
 
 
 # get all tasks
 @api.route('/todos', methods=['GET'])
 def get_tasks():
-    return jsonify(tasks),200
+    todo = Todo.query.first()
+    if todo is None:
+        return jsonify({'error': 'No tasks found'}), 404
+    
+    todo_dict = todo.to_dict()
 
+    todo_dict['created_at'] = todo_dict.get('created_at', '2023-02-20T00:00:00')
+    todo_dict['updated_at'] = todo_dict.get('updated_at', '2023-02-20T00:00:00')
+    return jsonify(todo_dict), 200
 
 
 # get by id
-@api.route('/todos/<int:id>', methods=['GET'])
-def get_title_by_id(id):
-    for task in tasks:
-        if task["id"]==id:
-            return jsonify(task)
-    return jsonify({"error":"the ID does not exists"}),400
-
+@api.route('/todos/<int:todo_id>', methods=['GET'])
+def get_title_by_id(todo_id):
+    todo = Todo.query.get(todo_id)
+    if todo is None:
+        return jsonify({'error':'Todo Not found'}), 404
+    return jsonify(todo.to_dict()), 200
 
 
 # post data
 @api.route('/todos', methods=['POST'])
 def add_data():
-    data = request.get_json()
-    for task in tasks:
-        if task["id"] == data["id"]:
-            return jsonify({"error":"Task with same ID exists"}),400
-    tasks.append(data)
-    return jsonify({"Success":"It's added"}),201
+    todo = Todo(
+        id = request.json.get('id'),
+        title = request.json.get('title'),
+        description = request.json.get('description'),
+        completed = request.json.get('completed', False),
+    )
+    if 'deadline_at' in request.json:
+        todo.deadline_at =datetime.fromisoformat(request.json.get('deadline_at'))
+
+    db.session.add(todo)
+    db.session.commit()
+    
+    return jsonify(todo.to_dict()),201
 
 
 
 # update by id
-@api.route('/todos/<int:id>', methods=['PUT'])
-def update_data(id):
-    data = request.get_json()
-    for task in tasks:
-        if task["id"] == id:
-            task.update(data)
-            return jsonify(task),200
-    else:
-        return jsonify({"error":"the id dosen't matches"}),400    
+@api.route('/todos/<int:todo_id>', methods=['PUT'])
+def update_todo(todo_id):
+    todo= Todo.query.get(todo_id)
+
+    if todo is None:
+        return jsonify({'error': 'Todonot found'}),404
+    
+    todo.title=request.json.get('title',todo.title)
+    todo.description =request.json.get('description',todo.description)
+    todo.completed =request.json.get('completed',todo.completed)
+
+    if 'deadline_at' in request.json:
+        todo.deadline_at = datetime.fromisoformat(request.json.get('deadline_at'))
+
+    db.session.commit()
+
+    updated_todo = todo.to_dict()
+    updated_todo['created_at'] = '2023-02-20T00:00:00'
+    updated_todo['updated_at'] = '2023-02-20T00:00:00'
+
+    return jsonify(updated_todo), 200
         
 
-        
-# delete by id
-@api.route('/todos/<int:id>', methods=['DELETE'])
-def delete_data(id):
-    for task in tasks:
-        if id == task["id"]:
-            tasks.remove(task)
-            return jsonify(task),200
-    return jsonify({"error":"ID does not exists"}),400
+#Delete api      
+@api.route('/todos/<int:todo_id>', methods=['DELETE'])
+def delete_todo(todo_id):
+    todo= Todo.query.get(todo_id)
+    if todo is None:
+        return jsonify({'error':'Todo Not Found'}),404
+    deleted_todo = todo.to_dict()
+    deleted_todo['created_at'] = '2023-02-20T00:00:00'
+    deleted_todo['updated_at'] = '2023-02-20T00:00:00'
+    db.session.delete(todo)
+    db.session.commit()
+    return jsonify(deleted_todo), 200
